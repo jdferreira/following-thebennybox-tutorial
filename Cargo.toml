@@ -5,3 +5,4 @@ authors = ["João D. Ferreira <jotomicron@gmail.com>"]
 
 [dependencies]
 glium = "*"
+time = "*"
