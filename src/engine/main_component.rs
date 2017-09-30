@@ -53,13 +53,14 @@ impl MainComponent {
         self.last_game_tick = time::precise_time_s();
 
         let mut unprocessed_time = 0.0;
+        let mut one_second_counter = 0.0;
         let mut frames = 0;
-        let mut frame_time_counter = 0.0;
+        let mut updates = 0;
 
         while self.running {
             let elapsed = self.elapsed_since_last_game_tick();
             unprocessed_time += elapsed;
-            frame_time_counter += elapsed;
+            one_second_counter += elapsed;
 
             let needs_render = unprocessed_time > MAX_TICK_DURATION;
 
@@ -67,11 +68,13 @@ impl MainComponent {
                 unprocessed_time -= MAX_TICK_DURATION;
                 self.handle_events();
                 self.game.update();
+                updates += 1;
 
-                if frame_time_counter > 1.0 {
-                    println!("FPS: {}", frames);
+                if one_second_counter > 1.0 {
+                    println!("FPS: {} // Updates: {}", frames, updates);
+                    one_second_counter = 0.0;
                     frames = 0;
-                    frame_time_counter = 0.0;
+                    updates = 0;
                 }
             }
 
