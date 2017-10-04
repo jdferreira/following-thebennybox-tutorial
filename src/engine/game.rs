@@ -18,7 +18,7 @@ impl Game {
         }
 
         if input_state.mouse_is_pressed(MouseButton::Right) {
-            println!("Pressed right mouse button at {?:}", input_state.mouse_position());
+            println!("Pressed right mouse button at {:?}", input_state.mouse_position());
         }
 
         if input_state.mouse_is_released(MouseButton::Right) {
