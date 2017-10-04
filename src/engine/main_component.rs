@@ -1,8 +1,10 @@
-use glium::glutin::{Event, EventsLoop, WindowEvent};
+use glium::glutin::EventsLoop;
+
 use time;
 
 use super::window;
 use super::game;
+use super::input;
 
 const WIDTH: u32 = 500;
 const HEIGHT: u32 = 500;
@@ -12,6 +14,7 @@ const MAX_TICK_DURATION: f64 = 1.0 / FRAME_CAP as f64;
 
 pub struct MainComponent {
     events_loop: EventsLoop,
+    input_state: input::InputState,
     window: window::Window,
     game: game::Game,
     running: bool,
@@ -22,9 +25,10 @@ impl MainComponent {
     pub fn new() -> Self {
         let events_loop = EventsLoop::new();
         let window = window::Window::new(WIDTH, HEIGHT, TITLE, &events_loop);
-
+        
         MainComponent {
             events_loop: events_loop,
+            input_state: Default::default(),
             window: window,
             game: game::Game,
             running: false,
@@ -65,13 +69,14 @@ impl MainComponent {
             let needs_render = unprocessed_time > MAX_TICK_DURATION;
 
             while unprocessed_time > MAX_TICK_DURATION {
-                unprocessed_time -= MAX_TICK_DURATION;
-                self.handle_events();
                 self.game.update();
+                
+                unprocessed_time -= MAX_TICK_DURATION;
                 updates += 1;
 
                 if one_second_counter > 1.0 {
-                    println!("FPS: {} // Updates: {}", frames, updates);
+                    let title = format!("FPS: {} // Updates: {}", frames, updates);
+                    self.window.set_title(&title);
                     one_second_counter = 0.0;
                     frames = 0;
                     updates = 0;
@@ -79,6 +84,8 @@ impl MainComponent {
             }
 
             if needs_render {
+                self.handle_events();
+                self.game.input(&self.input_state);
                 self.render();
                 frames += 1;
             }
@@ -102,18 +109,10 @@ impl MainComponent {
         elapsed
     }
 
-    pub fn handle_events(&mut self) {
-        let mut close_requested = false;
-        
-        self.events_loop.poll_events(|ev| {
-            if let Event::WindowEvent { event: WindowEvent::Closed, .. } = ev {
-                close_requested = true;
-            }
-        });
-
-        if close_requested {
+    fn handle_events(&mut self) {
+        self.input_state.handle_events(&mut self.events_loop);
+        if self.input_state.is_close_requested() {
             self.stop();
         }
     }
-
 }
