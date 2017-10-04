@@ -25,3 +25,7 @@ In summary, we introduced the `INputState` struct, which keeps the state of inpu
 **Note:** As the moment (and reflecting what is done in the tutorial), modifiers (Alt, Ctrl etc.) are not considered. I suspect they will be in the future, in which case I'll have to update the code of the `InputState` struct.
 
 Some aesthetic changes were implemented as well. In particular, frames per second are now reported in the title of the window, not in the terminal.
+
+## Videos #4, #5 and #6
+
+There is a `cgmath` crate that implements the basic 2-, 3- and 4-dimensional algebra objects (vectors, matrices, quaternions and the like). I will rely on that and not implement my own. Since these videos were all about this algebra stuff, I did not code anything, except the necessary boilerplate to include the `cgmath` create in the project.
