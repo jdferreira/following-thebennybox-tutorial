@@ -12,16 +12,16 @@ const TITLE: &'static str = "3D engine";
 const FRAME_CAP: u32 = 5000;
 const MAX_TICK_DURATION: f64 = 1.0 / FRAME_CAP as f64;
 
-pub struct MainComponent {
+pub struct MainComponent<'a> {
     events_loop: EventsLoop,
     input_state: input::InputState,
-    window: window::Window,
+    window: window::Window<'a>,
     game: game::Game,
     running: bool,
     last_game_tick: f64,
 }
 
-impl MainComponent {
+impl<'a> MainComponent<'a> {
     pub fn new() -> Self {
         let events_loop = EventsLoop::new();
         let window = window::Window::new(WIDTH, HEIGHT, TITLE, &events_loop);
@@ -96,7 +96,9 @@ impl MainComponent {
 
     fn render(&mut self) {
         self.game.render();
-        self.window.render();
+        self.window.draw(|frame| {
+            frame.clear_color(0.0, 0.5, 1.0, 1.0);
+        });
     }
 
     fn clean_up(&mut self) {}

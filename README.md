@@ -29,3 +29,15 @@ Some aesthetic changes were implemented as well. In particular, frames per secon
 ## Videos #4, #5 and #6
 
 There is a `cgmath` crate that implements the basic 2-, 3- and 4-dimensional algebra objects (vectors, matrices, quaternions and the like). I will rely on that and not implement my own. Since these videos were all about this algebra stuff, I did not code anything, except the necessary boilerplate to include the `cgmath` create in the project.
+
+## Video #7
+
+The original series uses *a lot* of static code and global state. Rust doesn't like that (and neither do I, that's one of the reasons to do this in Rust), so we have to circumvent that. Furthermore, `glium` provides a stateless mechanism to draw on the screen, and as such each draw method requires, among other things, the parameters needed to perform the drawing. This contrasts with how thebennybox does it, since the Java library they are using provides ways to set state upfront.
+
+As such, I included a `DrawParameters` instance inside the `Window` struct, which controls how the drawing is performed. I can, therefore, setup an instance-level state and not worry about that in the future. (Let's see if that's what I really want, though. Maybe glium's approach works better! But I don't want to keep copying the parameters from function to function so let's say this premature optimization serves both ergonomics and performance.)
+
+The changes here were, therefore:
+
+- inclusion of a `DrawParameters` instance in the `Window` struct: this required me to include a lifetime parameter to `Window` and `MainComponent`;
+- creation of the `DrawParameters` instance to be used on all drawings later on, enabling depth test and culling;
+- implementation of an auxiliary `Frame` object (a pair containing a mutable reference to the `glium::Frame` being drawn on and an immutable reference to the window's draw parameters) that contains the actual rendering methods, akin to thebennybox's `RenderUtils`. The engine communicates with the rendering phase by providing a callback that operates on one of these `Frame` instances and thus can draw only based on the methods implemented with this type. The rendering on the window is then controlled by the `Window`, which creates a `Frame`, executes the callback and swaps the buffers.
