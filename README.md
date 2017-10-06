@@ -20,7 +20,7 @@ The main changes in the code (beside the one describe above) are the inclusion o
 
 I've now moved the input code into it's own module, mimicking the original youtube videos. I'm still not very happy with how this let's us handle input. `glutin` gives us an `EventLoop` which we could use to handle the input in a more direct manner that does not require the indirection that was coded here. For now, I'll just keep the code as is and go on with this. If I feel like a new approach is better than what we have now, I'll change it and mention it in this document.
 
-In summary, we introduced the `INputState` struct, which keeps the state of input for the duration of a frame. It handles input events triggered by the keyboard and mouse (and window events such as closing the window) and takes notice of which keys and mouse buttons were pressed in each frame and which were released. The state of the input can then be queried by the `Game` instance, which can react to those inputs.
+In summary, we introduced the `InputState` struct, which keeps the state of input for the duration of a frame. It handles input events triggered by the keyboard and mouse (and window events such as closing the window) and takes notice of which keys and mouse buttons were pressed in each frame and which were released. The state of the input can then be queried by the `Game` instance, which can react to those inputs.
 
 **Note:** As the moment (and reflecting what is done in the tutorial), modifiers (Alt, Ctrl etc.) are not considered. I suspect they will be in the future, in which case I'll have to update the code of the `InputState` struct.
 
