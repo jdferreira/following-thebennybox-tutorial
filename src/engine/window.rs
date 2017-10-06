@@ -1,4 +1,4 @@
-use glium::{Display, Surface, DrawParameters, Depth, DepthTest, BackfaceCullingMode};
+use glium::{Display, Surface, DrawParameters, Depth, DepthTest, BackfaceCullingMode, Frame as GliumFrame};
 use glium::glutin::{EventsLoop, WindowBuilder, ContextBuilder};
 
 pub struct Window<'a> {
@@ -47,13 +47,13 @@ impl<'a> Window<'a> {
 }
 
 pub struct Frame<'a> {
-    frame: &'a mut ::glium::Frame,
+    frame: &'a mut GliumFrame,
     params: &'a DrawParameters<'a>
 }
 
 impl<'a> Frame<'a> {
 
-    fn new(frame: &'a mut ::glium::Frame, params: &'a DrawParameters<'a>) -> Self {
+    fn new(frame: &'a mut GliumFrame, params: &'a DrawParameters<'a>) -> Self {
         Frame { frame, params }
     }
 
