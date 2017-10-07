@@ -51,3 +51,7 @@ In this part of the implementation, I introduced data into the `Game` struct. Na
 As a test, `Game` instances contain a triangle mesh that renders on screen. To allow this, I had to create the shader program in GLSL (currently in the `assets` directory), which is part of Video #9 (but oh!, well; here they are anyway -- the next video will surely be easier to implement because of this).
 
 From a technical point of view, the creation of a `Game` instance now requires a reference to a `glium::Display`, which is use to compile the shaders and to create the buffers. Maybe we can remove this dependency in the future, but the inexistence of global state makes me think we won't be anle to, in a clean way.
+
+## Video #9
+
+This video is just about reading GLSL files, compiling a program, linking the various shaders together and binding the hsaders and the program to the OpenGL runtime. `glium` sets this all up to us, so no need to perform anything!
