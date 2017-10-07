@@ -1,6 +1,5 @@
 use glium::{Display, Surface, DrawParameters, Depth, DepthTest, BackfaceCullingMode, Frame as GliumFrame};
 use glium::glutin::{EventsLoop, WindowBuilder, ContextBuilder};
-use glium::uniforms::Uniforms;
 
 use super::mesh::Mesh;
 
@@ -60,16 +59,17 @@ impl<'a> Frame<'a> {
         Frame { frame, params }
     }
 
-    pub fn clear_screen(&self) {
+    pub fn clear_screen(&mut self) {
         // Clear the screen to black and clear the depth and stencil buffers
-        self.frame.clear_all_srgb((0.0, 0.0, 0.0, 1.0), 0.0, 0);
+        self.frame.clear_depth(1.0);
+        self.frame.clear_stencil(0); // TODO: Is 0 the correct number?
     }
 
-    pub fn clear_color(&self, red: f32, green: f32, blue: f32, alpha: f32) {
+    pub fn clear_color(&mut self, red: f32, green: f32, blue: f32, alpha: f32) {
         self.frame.clear_color_srgb(red, green, blue, alpha);
     }
 
-    pub fn draw<U: Uniforms>(&self, mesh: &Mesh) {
+    pub fn draw(&mut self, mesh: &Mesh) {
         mesh.draw(self.frame, self.params);
     }
 
