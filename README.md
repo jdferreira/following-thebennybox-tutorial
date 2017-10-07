@@ -41,3 +41,13 @@ The changes here were, therefore:
 - inclusion of a `DrawParameters` instance in the `Window` struct: this required me to include a lifetime parameter to `Window` and `MainComponent`;
 - creation of the `DrawParameters` instance to be used on all drawings later on, enabling depth test and culling;
 - implementation of an auxiliary `Frame` object (a pair containing a mutable reference to the `glium::Frame` being drawn on and an immutable reference to the window's draw parameters) that contains the actual rendering methods, akin to thebennybox's `RenderUtils`. The engine communicates with the rendering phase by providing a callback that operates on one of these `Frame` instances and thus can draw only based on the methods implemented with this type. The rendering on the window is then controlled by the `Window`, which creates a `Frame`, executes the callback and swaps the buffers.
+
+## Video #8
+
+`glium` takes away from the coder much of the housekeeping of buffers (vertex buffers, index buffers etc.) as well as the actual attributes that are copied into the GPU memory. Thus, I did not need to implement a function to copy the data into the GPU.
+
+In this part of the implementation, I introduced data into the `Game` struct. Namely, I created a `Mesh` struct that can be rendered, in the sense that it contains a `draw` method that is responsible for drawing into `glium`'s Frame. The Mesh contains its own vertex and index buffers, as well as an `Rc` reference to a program (a set of shaders to draw the mesh into the OpenGL context).
+
+As a test, `Game` instances contain a triangle mesh that renders on screen. To allow this, I had to create the shader program in GLSL (currently in the `assets` directory), which is part of Video #9 (but oh!, well; here they are anyway -- the next video will surely be easier to implement because of this).
+
+From a technical point of view, the creation of a `Game` instance now requires a reference to a `glium::Display`, which is use to compile the shaders and to create the buffers. Maybe we can remove this dependency in the future, but the inexistence of global state makes me think we won't be anle to, in a clean way.
