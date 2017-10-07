@@ -1,12 +1,45 @@
-use glium::glutin::{VirtualKeyCode, MouseButton};
-use super::input::InputState;
+use std::rc::Rc;
 
-pub struct Game;
+use glium::{Display, Program};
+use glium::glutin::{VirtualKeyCode, MouseButton};
+
+use super::input::InputState;
+use super::mesh::{Mesh, Vertex};
+use super::window::Frame;
+
+pub struct Game {
+    mesh: Mesh,
+}
 
 impl Game {
+    pub fn new(display: &Display) -> Self {
+        let vertices = vec![
+            Vertex::new(-1.0, -1.0, 0.0),
+            Vertex::new( 1.0, -1.0, 0.0),
+            Vertex::new( 0.0,  1.0, 0.0),
+        ];
+
+        let indices = vec![0, 1, 2];
+
+        let shader = Rc::new(
+            Program::from_source(
+                display,
+                include_str!("../../assets/shader.glslv"),
+                include_str!("../../assets/shader.glslf"),
+                None,
+            ).unwrap()
+        );
+
+        Game {
+            mesh: Mesh::new(display, &vertices, &indices, shader),
+        }
+    }
+
     pub fn update(&mut self) {} 
 
-    pub fn render(&mut self) {}
+    pub fn render(&self, frame: &mut Frame) {
+        frame.draw(&self.mesh);
+    }
 
     pub fn input(&mut self, input_state: &InputState) {
         if input_state.key_is_pressed(VirtualKeyCode::Space) {

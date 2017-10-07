@@ -25,12 +25,13 @@ impl<'a> MainComponent<'a> {
     pub fn new() -> Self {
         let events_loop = EventsLoop::new();
         let window = window::Window::new(WIDTH, HEIGHT, TITLE, &events_loop);
+        let game = game::Game::new(&window.display); // TODO: Can I make window.display private?
         
         MainComponent {
             events_loop: events_loop,
             input_state: Default::default(),
             window: window,
-            game: game::Game,
+            game: game,
             running: false,
             last_game_tick: time::precise_time_s(),
         }
@@ -95,9 +96,12 @@ impl<'a> MainComponent<'a> {
     }
 
     fn render(&mut self) {
-        self.game.render();
-        self.window.draw(|frame| {
+        let game = &self.game;
+
+        self.window.draw(|mut frame| {
+            frame.clear_screen();
             frame.clear_color(0.0, 0.5, 1.0, 1.0);
+            game.render(&mut frame);
         });
     }
 
