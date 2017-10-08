@@ -17,7 +17,6 @@ pub struct MainComponent<'a> {
     input_state: input::InputState,
     window: window::Window<'a>,
     game: game::Game,
-    running: bool,
     last_game_tick: f64,
 }
 
@@ -32,37 +31,20 @@ impl<'a> MainComponent<'a> {
             input_state: Default::default(),
             window: window,
             game: game,
-            running: false,
             last_game_tick: time::precise_time_s(),
         }
     }
 
-    pub fn start(&mut self) {
-        if self.running {
-            return;
-        }
-
-        self.run();
-    }
-
-    fn stop(&mut self) {
-        if !self.running {
-            return;
-        }
-
-        self.running = false;
-    }
-
-    fn run(&mut self) {
-        self.running = true;
+    pub fn run(&mut self) {
         self.last_game_tick = time::precise_time_s();
 
+        let mut running = true;
         let mut unprocessed_time = 0.0;
         let mut one_second_counter = 0.0;
         let mut frames = 0;
         let mut updates = 0;
 
-        while self.running {
+        while running {
             let elapsed = self.elapsed_since_last_game_tick();
             unprocessed_time += elapsed;
             one_second_counter += elapsed;
@@ -85,10 +67,14 @@ impl<'a> MainComponent<'a> {
             }
 
             if needs_render {
-                self.handle_events();
+                self.input_state.handle_events(&mut self.events_loop);
                 self.game.input(&self.input_state);
                 self.render();
                 frames += 1;
+            }
+
+            if self.input_state.is_close_requested() {
+                running = false;
             }
         }
 
@@ -113,12 +99,5 @@ impl<'a> MainComponent<'a> {
         self.last_game_tick = now;
 
         elapsed
-    }
-
-    fn handle_events(&mut self) {
-        self.input_state.handle_events(&mut self.events_loop);
-        if self.input_state.is_close_requested() {
-            self.stop();
-        }
     }
 }
